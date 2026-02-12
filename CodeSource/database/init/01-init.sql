@@ -79,4 +79,9 @@ ON CONFLICT (email) DO NOTHING;
 
 -- Les produits sont insérés par le Product Service (DataInitializer.java)
 
-RAISE NOTICE '✅ Base de données TechShop initialisée avec succès';
+--RAISE NOTICE '✅ Base de données TechShop initialisée avec succès';
+DO $$
+BEGIN
+    RAISE NOTICE 'Base de données TechShop initialisée avec succès';
+END
+$$;

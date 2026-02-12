@@ -1,0 +1,112 @@
+version: '3.9'
+
+services:
+
+  # ================================
+  # Database
+  # ================================
+  database:
+    image: techshop-database:latest
+    container_name: techshop-database
+    environment:
+      POSTGRES_DB: techshop
+      POSTGRES_USER: techshop
+      POSTGRES_PASSWORD: techshop
+    ports:
+      - "5432:5432"
+    networks:
+      - techshop-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  # ================================
+  # User Service
+  # ================================
+  user-service:
+    image: techshop-user-service:latest
+    container_name: techshop-user-service
+    depends_on:
+      - database
+    environment:
+      DATABASE_URL: postgresql://techshop:techshop@database:5432/techshop
+    ports:
+      - "8001:8001"
+    networks:
+      - techshop-network
+
+  # ================================
+  # Product Service
+  # ================================
+  product-service:
+    image: techshop-product-service:latest
+    container_name: techshop-product-service
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/techshop
+      SPRING_DATASOURCE_USERNAME: techshop
+      SPRING_DATASOURCE_PASSWORD: techshop
+    ports:
+      - "8002:8002"
+    networks:
+      - techshop-network
+
+  # ================================
+  # Order Service
+  # ================================
+  order-service:
+    image: techshop-order-service:latest
+    container_name: techshop-order-service
+    depends_on:
+      - database
+    environment:
+      DATABASE_URL: postgres://techshop:techshop@database:5432/techshop?sslmode=disable
+    ports:
+      - "8003:8003"
+    networks:
+      - techshop-network
+
+  # ================================
+  # API Gateway
+  # ================================
+  api-gateway:
+    image: techshop-api-gateway:latest
+    container_name: techshop-api-gateway
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+    environment:
+      USER_SERVICE_URL: http://user-service:8001
+      PRODUCT_SERVICE_URL: http://product-service:8002
+      ORDER_SERVICE_URL: http://order-service:8003
+    ports:
+      - "3000:3000"
+    networks:
+      - techshop-network
+
+  # ================================
+  # Frontend
+  # ================================
+  frontend:
+    image: techshop-frontend:latest
+    container_name: techshop-frontend
+    depends_on:
+      - api-gateway
+    ports:
+      - "80:80"
+    networks:
+      - techshop-network
+
+# ================================
+# Network
+# ================================
+networks:
+  techshop-network:
+    driver: bridge
+
+# ================================
+# Volume
+# ================================
+volumes:
+  postgres-data:
