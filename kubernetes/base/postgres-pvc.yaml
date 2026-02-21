@@ -1,0 +1,19 @@
+# Version API
+apiVersion: v1
+# Type de ressource : demande de stockage
+kind: PersistentVolumeClaim
+metadata:
+  # Nom de la demande de volume
+  name: postgres-pvc
+  # Namespace
+  namespace: techshop
+spec:
+  # Mode d'accès :
+  # ReadWriteOnce = monté par un seul pod en écriture
+  accessModes:
+    - ReadWriteOnce
+  # Ressources demandées
+  resources:
+    requests:
+      # Taille demandée
+      storage: 1Gi

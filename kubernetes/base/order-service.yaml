@@ -1,0 +1,20 @@
+# ==========================================
+# Service Kubernetes pour Order Service
+# ==========================================
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: order-service
+  namespace: techshop
+
+spec:
+  # Service interne uniquement
+  type: ClusterIP
+
+  selector:
+    app: order-service
+
+  ports:
+    - port: 8003
+      targetPort: 8003

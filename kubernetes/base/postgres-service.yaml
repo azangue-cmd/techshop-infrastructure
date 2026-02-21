@@ -1,0 +1,31 @@
+# =====================================================
+# Service Kubernetes pour PostgreSQL
+# Permet aux microservices de communiquer avec la base
+# =====================================================
+# Version API des Services
+apiVersion: v1
+# Type de ressource
+kind: Service
+metadata:
+  # Nom du service (important pour la communication interne)
+  name: postgres
+  
+  # Namespace du projet
+  namespace: techshop
+spec:
+  # Type ClusterIP :
+  # - Accessible uniquement à l'intérieur du cluster
+  # - Parfait pour une base de données
+  type: ClusterIP
+  # Sélecteur :
+  # Le service va cibler les pods ayant le label app: postgres
+  selector:
+    app: postgres
+
+  # Ports exposés
+  ports:
+    - name: postgres
+    # Port exposé à l'intérieur du cluster
+      port: 5432      
+      # Port du container PostgreSQL    
+      targetPort: 5432    

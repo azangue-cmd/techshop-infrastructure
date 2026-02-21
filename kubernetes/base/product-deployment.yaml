@@ -1,0 +1,53 @@
+# =====================================================
+# Deployment Kubernetes - Product Service (Spring Boot)
+# =====================================================
+# Version API utilisée pour les Deployments
+apiVersion: apps/v1
+# Type de ressource
+kind: Deployment
+metadata:
+  # Nom du Deployment
+  name: product-service
+  # Namespace du projet
+  namespace: techshop
+spec:
+  # Nombre de replicas (scalable plus tard)
+  replicas: 1
+  # Sélecteur permettant d’associer le Deployment aux Pods
+  selector:
+    matchLabels:
+      app: product-service
+  # Template du Pod qui sera créé
+  template:
+    metadata:
+      # Labels appliqués au Pod
+      labels:
+        app: product-service
+    spec:
+      containers:
+        - name: product-service
+          # Image publiée dans Docker Hub
+          # IMPORTANT : doit exister dans le registry
+          image: aduzeus/techshop-product-service:1.0
+          # Toujours vérifier les nouvelles versions
+          imagePullPolicy: Always
+          # Port exposé par le container Spring Boot
+          ports:
+            - containerPort: 8002
+          # Variables d’environnement pour la connexion à PostgreSQL
+          env:
+            # URL JDBC vers le Service PostgreSQL interne
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/techshop
+            # Username récupéré depuis le Secret Kubernetes
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            # Mot de passe récupéré depuis le Secret Kubernetes
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD

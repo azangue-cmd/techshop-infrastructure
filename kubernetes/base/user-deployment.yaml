@@ -1,0 +1,30 @@
+# =====================================================
+# Deployment Kubernetes - User Service (FastAPI)
+# =====================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: techshop
+spec:
+  # 1 replica pour commencer (scalable plus tard)
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          # Image construite dans Minikube
+          image: aduzeus/techshop-user-service:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8001
+          # Variable d'environnement pour connexion DB
+          env:
+            - name: DATABASE_URL
+              value: postgresql://techshop:techshop@postgres:5432/techshop

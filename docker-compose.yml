@@ -2,111 +2,186 @@ version: '3.9'
 
 services:
 
-  # ================================
-  # Database
-  # ================================
+  # =====================================================
+  # 🗄️ DATABASE - PostgreSQL
+  # =====================================================
   database:
-    image: techshop-database:latest
-    container_name: techshop-database
+
+    # 🔨 Build l'image depuis notre Dockerfile personnalisé
+    build:
+    # Racine du projet
+      context: .                      
+      dockerfile: docker/database/Dockerfile
+    # Nom de l'image locale
+    image: techshop-database:latest   
+    # Nom fixe du container
+    container_name: techshop-database 
+
+    # 🌍 Variables d’environnement PostgreSQL
     environment:
       POSTGRES_DB: techshop
       POSTGRES_USER: techshop
       POSTGRES_PASSWORD: techshop
+
+    # 🔌 Expose le port 5432 vers la machine locale
     ports:
       - "5432:5432"
+
+    # 🌐 Connexion au réseau interne Docker
     networks:
       - techshop-network
+
+    # 💾 Volume pour persister les données PostgreSQL
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
-  # ================================
-  # User Service
-  # ================================
+
+  # =====================================================
+  # 👤 USER SERVICE (Python / FastAPI)
+  # =====================================================
   user-service:
+
+    build:
+      context: .
+      dockerfile: docker/user-service/Dockerfile
+
     image: techshop-user-service:latest
     container_name: techshop-user-service
+
+    # ⏳ Attendre que la base démarre avant
     depends_on:
       - database
+
+    # 🔗 URL de connexion à PostgreSQL
     environment:
       DATABASE_URL: postgresql://techshop:techshop@database:5432/techshop
+
     ports:
       - "8001:8001"
+
     networks:
       - techshop-network
 
-  # ================================
-  # Product Service
-  # ================================
+
+  # =====================================================
+  # 📦 PRODUCT SERVICE (Java / Spring Boot)
+  # =====================================================
   product-service:
+
+    build:
+      context: .
+      dockerfile: docker/product-service/Dockerfile
+
     image: techshop-product-service:latest
     container_name: techshop-product-service
+
     depends_on:
       - database
+
+    # 🔗 Configuration Spring Boot pour PostgreSQL
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/techshop
       SPRING_DATASOURCE_USERNAME: techshop
       SPRING_DATASOURCE_PASSWORD: techshop
+
     ports:
       - "8002:8002"
+
     networks:
       - techshop-network
 
-  # ================================
-  # Order Service
-  # ================================
+
+  # =====================================================
+  # 🧾 ORDER SERVICE (Go)
+  # =====================================================
   order-service:
+
+    build:
+      context: .
+      dockerfile: docker/order-service/Dockerfile
+
     image: techshop-order-service:latest
     container_name: techshop-order-service
+
     depends_on:
       - database
+
+    # 🔗 Connexion PostgreSQL pour service Go
     environment:
       DATABASE_URL: postgres://techshop:techshop@database:5432/techshop?sslmode=disable
+
     ports:
       - "8003:8003"
+
     networks:
       - techshop-network
 
-  # ================================
-  # API Gateway
-  # ================================
+
+  # =====================================================
+  # 🌉 API GATEWAY (Node.js)
+  # =====================================================
   api-gateway:
+
+    build:
+      context: .
+      dockerfile: docker/api-gateway/Dockerfile
+
     image: techshop-api-gateway:latest
     container_name: techshop-api-gateway
+
+    # ⏳ Attendre les microservices
     depends_on:
       - user-service
       - product-service
       - order-service
+
+    # 🔗 URLs internes des microservices
     environment:
       USER_SERVICE_URL: http://user-service:8001
       PRODUCT_SERVICE_URL: http://product-service:8002
       ORDER_SERVICE_URL: http://order-service:8003
+
     ports:
       - "3000:3000"
+
     networks:
       - techshop-network
 
-  # ================================
-  # Frontend
-  # ================================
+
+  # =====================================================
+  # 🖥️ FRONTEND (React + Nginx)
+  # =====================================================
   frontend:
+
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+
     image: techshop-frontend:latest
     container_name: techshop-frontend
+
     depends_on:
       - api-gateway
+
+    # 🌍 Expose sur le port 80 (accès navigateur)
     ports:
       - "80:80"
+
     networks:
       - techshop-network
 
-# ================================
-# Network
-# ================================
+
+# =====================================================
+# 🌐 RÉSEAU DOCKER INTERNE
+# =====================================================
 networks:
   techshop-network:
-    driver: bridge
+  # Réseau isolé interne Docker
+    driver: bridge   
 
-# ================================
-# Volume
-# ================================
+
+# =====================================================
+# 💾 VOLUME POUR PERSISTANCE DB
+# =====================================================
 volumes:
   postgres-data:

@@ -1,0 +1,46 @@
+# ==========================================
+# API utilisée pour les Deployments
+# ==========================================
+apiVersion: apps/v1
+
+# Type de ressource Kubernetes
+kind: Deployment
+
+metadata:
+  # Nom du Deployment
+  name: order-service
+  
+  # Namespace dans lequel on déploie
+  namespace: techshop
+
+spec:
+  # Nombre de replicas (1 pour le moment)
+  replicas: 1
+
+  # Sélecteur pour identifier les pods gérés
+  selector:
+    matchLabels:
+      app: order-service
+
+  template:
+    metadata:
+      labels:
+        app: order-service
+
+    spec:
+      containers:
+        - name: order-service
+
+          # Image publiée sur Docker Hub
+          image: aduzeus/techshop-order-service:1.0
+
+          # Important pour éviter Always en local
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 8003
+
+          # Variables d'environnement (connexion DB)
+          env:
+            - name: DATABASE_URL
+              value: postgres://techshop:techshop@postgres:5432/techshop?sslmode=disable

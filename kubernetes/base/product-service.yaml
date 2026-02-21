@@ -1,0 +1,25 @@
+# =====================================================
+# Service Kubernetes - Product Service
+# =====================================================
+# API utilisée pour les Services
+apiVersion: v1
+# Type de ressource
+kind: Service
+metadata:
+  # Nom du Service
+  name: product-service
+
+  # Namespace du projet
+  namespace: techshop
+spec:
+  # Type ClusterIP :
+  # Accessible uniquement à l’intérieur du cluster
+  type: ClusterIP
+  # Sélecteur : cible les Pods avec label app=product-service
+  selector:
+    app: product-service
+  # Ports exposés par le Service
+  ports:
+    - name: http
+      port: 8002        # Port accessible à l’intérieur du cluster
+      targetPort: 8002  # Port du container

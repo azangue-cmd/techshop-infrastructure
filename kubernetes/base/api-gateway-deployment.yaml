@@ -1,0 +1,52 @@
+# ==========================================
+# API utilisée pour les Deployments
+# ==========================================
+apiVersion: apps/v1
+
+# Type de ressource
+kind: Deployment
+
+metadata:
+  # Nom du Deployment
+  name: api-gateway
+  
+  # Namespace cible
+  namespace: techshop
+
+spec:
+  # Nombre de replicas
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: api-gateway
+
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+
+    spec:
+      containers:
+        - name: api-gateway
+
+          # Image publiée sur Docker Hub
+          image: aduzeus/techshop-api-gateway:1.0
+
+          # Important pour éviter Always inutile
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 3000
+
+          # Variables d'environnement
+          # URLs internes Kubernetes
+          env:
+            - name: USER_SERVICE_URL
+              value: http://user-service:8001
+
+            - name: PRODUCT_SERVICE_URL
+              value: http://product-service:8002
+
+            - name: ORDER_SERVICE_URL
+              value: http://order-service:8003
