@@ -1,0 +1,17 @@
+# =====================================================
+# ConfigMap - Configuration API Gateway
+# =====================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: techshop
+data:
+  # Configuration Node.js
+  NODE_ENV: production
+  PORT: "3000"
+  
+  # Services backends URLs internes
+  USER_SERVICE: http://user-service:8001
+  PRODUCT_SERVICE: http://product-service:8002
+  ORDER_SERVICE: http://order-service:8003

@@ -1,0 +1,29 @@
+# =====================================================
+# ConfigMap - Configuration applicative commune
+# =====================================================
+# Une ConfigMap stocke les données de configuration
+# NON SENSIBLES (pas de mots de passe, clés secrètes, etc)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: techshop
+data:
+  # URLs de service internes (communication entre microservices)
+  DATABASE_HOST: postgres
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: techshop
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  RABBITMQ_HOST: rabbitmq
+  RABBITMQ_PORT: "5672"
+  
+  # Configuration des services
+  USER_SERVICE_URL: http://user-service:8001
+  PRODUCT_SERVICE_URL: http://product-service:8002
+  ORDER_SERVICE_URL: http://order-service:8003
+  API_GATEWAY_URL: http://api-gateway:3000
+  
+  # Logs et debug
+  LOG_LEVEL: info
+  DEBUG: "false"

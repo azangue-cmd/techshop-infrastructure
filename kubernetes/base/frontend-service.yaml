@@ -1,0 +1,26 @@
+# Version de l'API Kubernetes
+apiVersion: v1
+
+# Type de ressource : Service (expose les pods en interne)
+kind: Service
+
+metadata:
+  # Nom du service
+  name: frontend
+  
+  # Namespace ciblé
+  namespace: techshop
+
+spec:
+  # Le service va router vers les pods ayant ce label
+  selector:
+    app: frontend
+
+  ports:
+  # Port exposé à l'intérieur du cluster
+  - port: 80          
+  # Port du conteneur vers lequel le trafic est redirigé
+    targetPort: 80    
+
+  # Type ClusterIP = accessible uniquement à l'intérieur du cluster
+  type: ClusterIP

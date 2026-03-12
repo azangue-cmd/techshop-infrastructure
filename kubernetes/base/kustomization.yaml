@@ -10,15 +10,24 @@ namespace: techshop
 # Liste complète des ressources Kubernetes
 resources:
   - namespace.yaml
+  # Secrets et ConfigMaps
   - postgres-secret.yaml
+  - app-secrets.yaml
+  - app-configmap.yaml
+  - api-gateway-configmap.yaml
+  # Stockage
   - postgres-pvc.yaml
+  # Déploiements
   - postgres-deployment.yaml
-  - postgres-service.yaml
   - user-deployment.yaml
-  - user-service.yaml
   - product-deployment.yaml
-  - product-service.yaml
   - order-deployment.yaml
-  - order-service.yaml
   - api-gateway-deployment.yaml
+  - frontend-deployment.yaml
+  # Services
+  - postgres-service.yaml
+  - user-service.yaml
+  - product-service.yaml
+  - order-service.yaml
   - api-gateway-service.yaml
+  - frontend-service.yaml

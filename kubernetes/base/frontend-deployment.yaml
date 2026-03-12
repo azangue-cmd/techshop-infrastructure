@@ -1,0 +1,39 @@
+# Version de l'API Kubernetes utilisée
+apiVersion: apps/v1
+
+# Type de ressource : Deployment (gère les pods et leur cycle de vie)
+kind: Deployment
+
+metadata:
+  # Nom du deployment
+  name: frontend
+  
+  # Namespace dans lequel il sera déployé
+  namespace: techshop
+
+spec:
+  # Nombre de réplicas (nombre de pods identiques)
+  replicas: 1
+
+  # Sélecteur permettant d’identifier les pods gérés par ce deployment
+  selector:
+    matchLabels:
+      app: frontend
+
+  # Template du pod (modèle des pods créés)
+  template:
+    metadata:
+      labels:
+        # Label utilisé par le Service pour cibler ce pod
+        app: frontend
+
+    spec:
+      containers:
+      - name: frontend
+        
+        # Image Docker hébergée sur Docker Hub
+        image: aduzeus/frontend:latest
+        
+        # Port exposé par le conteneur (nginx écoute sur 80)
+        ports:
+        - containerPort: 80
