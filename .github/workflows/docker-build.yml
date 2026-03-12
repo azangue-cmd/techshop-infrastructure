@@ -20,25 +20,25 @@ jobs:
 
       - name: Build and Push User Service
         run: |
-          docker build -t aduzeus/user-service:latest ./docker/user-service
+          docker build -t aduzeus/user-service:latest -f ./docker/user-service/Dockerfile .
           docker push aduzeus/user-service:latest
 
       - name: Build and Push Product Service
         run: |
-          docker build -t aduzeus/product-service:latest ./docker/product-service
+          docker build -t aduzeus/product-service:latest -f ./docker/product-service/Dockerfile .
           docker push aduzeus/product-service:latest
 
       - name: Build and Push Order Service
         run: |
-          docker build -t aduzeus/order-service:latest ./docker/order-service
+          docker build -t aduzeus/order-service:latest -f ./docker/order-service/Dockerfile .
           docker push aduzeus/order-service:latest
 
       - name: Build and Push API Gateway
         run: |
-          docker build -t aduzeus/api-gateway:latest ./docker/api-gateway
+          docker build -t aduzeus/api-gateway:latest -f ./docker/api-gateway/Dockerfile .
           docker push aduzeus/api-gateway:latest
 
       - name: Build and Push Frontend
         run: |
-          docker build -t aduzeus/frontend:latest ./docker/frontend
+          docker build -t aduzeus/frontend:latest -f ./docker/frontend/Dockerfile .
           docker push aduzeus/frontend:latest
